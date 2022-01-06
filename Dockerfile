@@ -2,12 +2,7 @@
 #
 # Copyright (c) 2021 Patrick Dung
 
-FROM docker.io/node:14-bullseye-slim
-
-ARG LABEL_IMAGE_URL
-ARG LABEL_IMAGE_SOURCE
-LABEL org.opencontainers.image.url=${LABEL_IMAGE_URL}
-LABEL org.opencontainers.image.source=${LABEL_IMAGE_SOURCE}
+FROM docker.io/node:14-bullseye-slim as build
 
 ARG REVISION_HASH
 ARG ARCH="arm64"
@@ -19,10 +14,9 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN set -eux && \
     apt-get -y update && \
     apt-get -y install --no-install-suggests --no-install-recommends \
-    bash git sed make pkg-config python3 gcc g++ procps libjemalloc2 file coreutils && \
+    bash git make pkg-config python3 gcc g++ coreutils && \
     apt-get -y upgrade && apt-get -y autoremove && apt-get -y clean && \
     rm -rf /var/lib/apt/lists/* && \
-    if [ -e /usr/lib/aarch64-linux-gnu/libjemalloc.so.2 ] ; then ln -s /usr/lib/aarch64-linux-gnu/libjemalloc.so.2 /usr/lib/libjemalloc.so.2 ; fi && \
     npm install -g npm@8.0.0 && \
     mkdir -p /usr/src/app && \
     mkdir -p dist/core/common/__generated__ && \
@@ -36,8 +30,8 @@ COPY . /usr/src/app
 # Run all application code and dependancy setup as a non-root user:
 # SEE: https://github.com/nodejs/docker-node/blob/a2eb9f80b0fd224503ee2678867096c9e19a51c2/docs/BestPractices.md#non-root-user
 RUN set -eux && chown -R node /usr/src/app
-USER node
 
+USER node
 # Node alpine image does not include ssh. This is a workaround for https://github.com/npm/cli/issues/2610.
 # Install build static assets and clear caches.
 RUN set -eux && \
@@ -47,13 +41,31 @@ RUN set -eux && \
     npm run build && \
     npm prune --production
 
-USER root
+# ----------------
+
+FROM docker.io/node:16-bullseye-slim
+
+ARG LABEL_IMAGE_URL
+ARG LABEL_IMAGE_SOURCE
+LABEL org.opencontainers.image.url=${LABEL_IMAGE_URL}
+LABEL org.opencontainers.image.source=${LABEL_IMAGE_SOURCE}
+
 ENV DEBIAN_FRONTEND noninteractive
 RUN set -eux && \
-    apt-get purge -y gcc g++ && apt-get -y autoremove && apt-get -y clean && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get -y update && \
+    apt-get -y install --no-install-suggests --no-install-recommends \
+    tini bash python3 procps libjemalloc2 && \
+    apt-get -y upgrade && apt-get -y autoremove && apt-get -y clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    if [ -e /usr/lib/aarch64-linux-gnu/libjemalloc.so.2 ] ; then ln -s /usr/lib/aarch64-linux-gnu/libjemalloc.so.2 /usr/lib/libjemalloc.so.2 ; fi && \
+    npm install -g npm@8.0.0 && \
+    mkdir -p /usr/src/app && \
+    chown node:node /usr/src/app
+
+COPY --from=build --chown=node:node /usr/src/app /usr/src/app
 
 USER node
+WORKDIR /usr/src/app
 
 # Setup the environment
 ENV NODE_ENV production
@@ -65,6 +77,8 @@ EXPOSE 5000/tcp
 # For arm64
 #ENV LD_PRELOAD=/usr/lib/aarch64-linux-gnu/libjemalloc.so.2
 ENV LD_PRELOAD=/usr/lib/libjemalloc.so.2
+
+ENTRYPOINT ["tini", "--"]
 
 # Run the node process directly instead of using `npm run start`:
 # SEE: https://github.com/nodejs/docker-node/blob/a2eb9f80b0fd224503ee2678867096c9e19a51c2/docs/BestPractices.md#cmd
