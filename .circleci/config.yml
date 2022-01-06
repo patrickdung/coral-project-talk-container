@@ -1,0 +1,127 @@
+---
+job_defaults: &job_defaults
+  resource_class: medium
+
+# job_node_environment will setup the environment for any job being executed.
+job_node_environment: &job_node_environment
+  NODE_ENV: "test"
+  WEBPACK_MAX_CORES: "2"
+  NODE_OPTIONS: "--max-old-space-size=4096"
+
+# job_node_defaults applies all the defaults for each job.
+job_node_defaults: &job_node_defaults
+  # working_directory: ~/coralproject/talk
+  <<: *job_defaults
+  working_directory: ~/patrickdung/coral-project-talk-container
+  docker:
+    - image: circleci/node:14
+  environment:
+    <<: *job_node_environment
+
+setup_remote_docker_defaults: &setup_remote_docker_defaults
+  # This is pinned to 19 to resolve a problem described here:
+  # https://discuss.circleci.com/t/docker-build-fails-with-nonsensical-eperm-operation-not-permitted-copyfile/37364/24
+  version: 19.03.13
+
+version: 2.1
+jobs:
+  # npm_dependencies will install the dependencies used by all other steps.
+  npm_dependencies:
+    <<: *job_node_defaults
+    steps:
+      - run:
+          name: Install correct NPM version
+          command: sudo npm install -g npm@8.0.0
+          no_output_timeout: 10m
+      - checkout
+      - attach_workspace:
+          # at: ~/coralproject/talk
+          at: ~/patrickdung/coral-project-talk-container
+      - restore_cache:
+          keys:
+            # Find a cache corresponding to this specific package-lock.json
+            # checksum when this file is changed, this key will fail.
+            - v2-dependency-cache-{{ checksum "package-lock.json" }}
+            # Find the most recently generated cache used from any branch
+            - v2-dependency-cache-
+      # Disabled as we don't want to use sudo to update packages
+      # - run:
+      #     name: Update NPM
+      #     command: sudo npm update -g npm
+      # Disabled until there's capabilities to ignore a specific vun. Related:
+      # https://npm.community/t/please-provide-option-to-ignore-packages-in-npm-audit/403/4
+      # https://github.com/npm/cli/pull/10
+      # https://github.com/npm/rfcs/pull/18
+      #
+      #   - run:
+      #       name: Audit dependencies
+      #       command: npm audit
+      - run:
+          name: Install dependencies
+          command: npm ci
+          no_output_timeout: 20m
+      - save_cache:
+          key: v2-dependency-cache-{{ checksum "package-lock.json" }}
+          paths:
+            - ~/.npm
+      - persist_to_workspace:
+          root: .
+          paths:
+            - node_modules
+
+  # release_docker will build and push the Docker image.
+  release_docker:
+    <<: *job_node_defaults
+    steps:
+      - checkout
+      - run:
+          name: Get branch name of latest release from official repo
+          command: >-
+            curl -sL https://api.github.com/repos/coralproject/talk/releases | \
+              jq -r ".[].tag_name" | grep -v rc | sort -nr -t. -k 1 -k 2 -k 3 | head -n 1 > /tmp/latest-branch-name && \
+            echo "REMOTE_BRANCH_NAME=$(cat /tmp/latest-branch-name)" >> $BASH_ENV
+      - run:
+          name: CheckOut application code from Git to build
+          command: >-
+            git clone -b ${REMOTE_BRANCH_NAME} --single-branch https://github.com/coralproject/talk
+      - setup_remote_docker:
+          <<: *setup_remote_docker_defaults
+      - deploy:
+          name: Deploy the code
+          command: >-
+            cd talk && docker build -t patrickdung/coral-project-talk-container:latest -f ../Dockerfile .
+          no_output_timeout: 30m
+
+# filter_release will add the filters for a deploy job in a workflow to make it
+# only execute on a deploy related job.
+filter_release: &filter_release
+  filters:
+    branches:
+      only:
+        - main
+    tags:
+      only: /^v.*/
+
+# filter_tagged_release will add the filters for a deploy job in a workflow to
+# make it only execute on a tagged release.
+filter_tagged_release: &filter_tagged_release
+  filters:
+    branches:
+      ignore: /.*/
+    tags:
+      only: /^v.*/
+
+# filter_develop will add the filters for a development related commit.
+filter_develop: &filter_develop
+  filters:
+    branches:
+      ignore:
+        - main
+
+workflows:
+  build-test-deploy:
+    jobs:
+      - npm_dependencies:
+          <<: *filter_release
+      - release_docker:
+          <<: *filter_release
