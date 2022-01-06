@@ -48,7 +48,7 @@ jobs:
               --build-arg LABEL_IMAGE_URL=https://github.com/coralproject/talk \
               --build-arg LABEL_IMAGE_SOURCE=${CIRCLE_REPOSITORY_URL} \
                -f ../Dockerfile .
-            docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${REMOTE_BRANCH_NAME}
+            docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${REMOTE_BRANCH_NAME} registry.gitlab.com/patrickdung/docker-images/${CIRCLE_PROJECT_REPONAME}:${REMOTE_BRANCH_NAME}
           no_output_timeout: 30m
 
 # filter_release will add the filters for a deploy job in a workflow to make it
