@@ -38,7 +38,7 @@ jobs:
             pwd
             ls -la ..
             ls -la .
-            echo "$GITLAB_PASSWORD" | docker login --username "$GITLAB_TOKEN" --password-stdin registry.gitlab.com
+            echo "$GITLAB_TOKEN" | docker login --username "$GITLAB_USERNAME" --password-stdin registry.gitlab.com
             # To use squash, the daemon needs to enable experimental feature
             sudo bash -c 'echo "{\"experimental\": true}" > /etc/docker/daemon.json'
             sudo systemctl restart docker
