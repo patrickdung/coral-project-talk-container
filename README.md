@@ -6,5 +6,3 @@ Please use the official binary/container from Coral Project.
 
 Idea is from StackOverflow:
 - https://stackoverflow.com/questions/58465057/trigger-a-github-action-when-another-repository-creates-a-new-release
-
-The part for using cosign inside the GitHub actions is referenced from [Kyverno](https://github.com/kyverno/kyverno)
