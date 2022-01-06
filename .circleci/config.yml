@@ -39,6 +39,9 @@ jobs:
             ls -la ..
             ls -la .
             echo "$GITLAB_PASSWORD" | docker login --username "$GITLAB_USERNAME" --password-stdin registry.gitlab.com
+            # To use squash, the daemon needs to enable experimental feature
+            sudo bash -c 'echo "{\"experimental\": true}" > /etc/docker/daemon.json'
+            sudo systemctl restart docker
             DOCKER_CLI_EXPERIMENTAL=enabled docker build --squash \
               -t ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${REMOTE_BRANCH_NAME} \
               --build-arg REVISION_HASH=${COMMIT_HASH} \
