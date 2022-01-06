@@ -29,8 +29,6 @@ jobs:
   release_docker:
     <<: *job_node_defaults
     steps:
-      - setup_remote_docker:
-          <<: *setup_remote_docker_defaults
       - checkout
       - run:
           name: Get branch name of latest release from official repo
@@ -45,11 +43,14 @@ jobs:
       - run:
           name: Get commit hash
           command: >-
-            cd talk && echo "COMMIT_HASH=$(git log --pretty=format:'%h' -n 1)" >> $BASH_ENV
+            cd talk && echo "COMMIT_HASH=$(git log --pretty=format:'%h' -n 1)" >> $BASH_ENV && \
+            pwd && echo ${COMMIT_HASH}
+      - setup_remote_docker:
+          <<: *setup_remote_docker_defaults
       - deploy:
           name: Deploy the code
           command: >-
-            ls -la -R .. && \
+            pwd && ls -la .. && \
             docker build -t patrickdung/coral-project-talk-container:latest \
               --build-arg REVISION_HASH=${COMMIT_HASH} -f ../Dockerfile .
           no_output_timeout: 30m
