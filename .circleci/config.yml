@@ -49,6 +49,7 @@ jobs:
       - deploy:
           name: Deploy the code
           command: >-
+            ls -la -R .. && \
             docker build -t patrickdung/coral-project-talk-container:latest \
               --build-arg REVISION_HASH=${COMMIT_HASH} -f ../Dockerfile .
           no_output_timeout: 30m
