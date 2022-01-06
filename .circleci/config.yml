@@ -36,6 +36,7 @@ jobs:
             curl -sL https://api.github.com/repos/coralproject/talk/releases | \
               jq -r ".[].tag_name" | grep -v rc | sort -nr -t. -k 1 -k 2 -k 3 | head -n 1 > /tmp/latest-branch-name && \
             echo "REMOTE_BRANCH_NAME=$(cat /tmp/latest-branch-name)" >> $BASH_ENV
+            echo ${REMOTE_BRANCH_NAME}
       - run:
           name: CheckOut application code from Git to build
           command: >-
@@ -43,13 +44,17 @@ jobs:
       - run:
           name: Get commit hash
           command: >-
-            cd talk && echo "COMMIT_HASH=$(git log --pretty=format:'%h' -n 1)" >> $BASH_ENV && pwd && echo ${COMMIT_HASH}
+            cd talk 
+            echo "COMMIT_HASH=$(git log --pretty=format:'%h' -n 1)" >> $BASH_ENV
+            pwd
+            echo ${COMMIT_HASH}
       - setup_remote_docker:
           <<: *setup_remote_docker_defaults
       - deploy:
           name: Deploy the code
           command: >-
-            pwd && ls -la .. && \
+            pwd
+            ls -la .
             docker build -t patrickdung/coral-project-talk-container:latest \
               --build-arg REVISION_HASH=${COMMIT_HASH} -f ../Dockerfile .
           no_output_timeout: 30m
