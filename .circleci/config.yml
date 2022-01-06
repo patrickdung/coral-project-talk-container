@@ -30,8 +30,6 @@ jobs:
           working_directory: talk
           command: |
             echo "COMMIT_HASH=$(git log --pretty=format:'%h' -n 1)" >> $BASH_ENV
-      #- setup_remote_docker:
-      #    <<: *setup_remote_docker_defaults
       - deploy:
           name: Build container
           working_directory: talk
@@ -43,7 +41,10 @@ jobs:
             echo "$GITHUB_PASSWORD" | docker login -u "$GITHUB_USERNAME" -password-stdin registry.gitlab.com
             docker build --squash \
               -t ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${REMOTE_BRANCH_NAME} \
-              --build-arg REVISION_HASH=${COMMIT_HASH} -f ../Dockerfile .
+              --build-arg REVISION_HASH=${COMMIT_HASH} \
+              --build-arg LABEL_IMAGE_URL=https://github.com/coralproject/talk \
+              --build-arg LABEL_IMAGE_IMAGE=https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME} \
+               -f ../Dockerfile .
             docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${REMOTE_BRANCH_NAME}
           no_output_timeout: 30m
 
