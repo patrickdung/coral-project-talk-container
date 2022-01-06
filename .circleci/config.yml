@@ -44,16 +44,18 @@ jobs:
             git clone -b ${REMOTE_BRANCH_NAME} --single-branch https://github.com/coralproject/talk
       - run:
           name: Get commit hash
+          working_directory: talk
           command: |
-            cd talk 
             echo "COMMIT_HASH=$(git log --pretty=format:'%h' -n 1)" >> $BASH_ENV
       - setup_remote_docker:
           <<: *setup_remote_docker_defaults
       - deploy:
-          name: Deploy the code
+          name: Build container
+          working_directory: talk
           command: |
             echo ${COMMIT_HASH}
             pwd
+            ls -la ..
             ls -la .
             docker build -t patrickdung/coral-project-talk-container:latest \
               --build-arg REVISION_HASH=${COMMIT_HASH} -f ../Dockerfile .
