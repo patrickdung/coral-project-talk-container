@@ -24,6 +24,7 @@ setup_remote_docker_defaults: &setup_remote_docker_defaults
   version: 19.03.13
 
 version: 2.1
+executorType: machine
 jobs:
   # release_docker will build and push the Docker image.
   release_docker:
