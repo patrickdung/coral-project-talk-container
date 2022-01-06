@@ -38,7 +38,7 @@ jobs:
             pwd
             ls -la ..
             ls -la .
-            echo "$GITHUB_PASSWORD" | docker login --username "$GITHUB_USERNAME" --password-stdin registry.gitlab.com
+            echo "$GITLAB_PASSWORD" | docker login --username "$GITLAB_USERNAME" --password-stdin registry.gitlab.com
             docker build --squash \
               -t ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${REMOTE_BRANCH_NAME} \
               --build-arg REVISION_HASH=${COMMIT_HASH} \
