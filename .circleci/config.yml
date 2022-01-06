@@ -46,7 +46,7 @@ jobs:
               -t ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${REMOTE_BRANCH_NAME} \
               --build-arg REVISION_HASH=${COMMIT_HASH} \
               --build-arg LABEL_IMAGE_URL=https://github.com/coralproject/talk \
-              --build-arg LABEL_IMAGE_IMAGE=${CIRCLE_REPOSITORY_URL} \
+              --build-arg LABEL_IMAGE_SOURCE=${CIRCLE_REPOSITORY_URL} \
                -f ../Dockerfile .
             docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${REMOTE_BRANCH_NAME}
           no_output_timeout: 30m
