@@ -45,9 +45,14 @@ RUN set -eux && \
     git config --global url."https://".insteadOf ssh:// && \
     npm ci && \
     npm run build && \
-    npm prune --production && \
+    npm prune --production
+
+USER root
+RUN set -eux && \
     apt-get purge gcc g++ && apt-get -y autoremove && apt-get -y clean && \
     rm -rf /var/lib/apt/lists/*
+
+USER node
 
 # Setup the environment
 ENV NODE_ENV production
