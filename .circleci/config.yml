@@ -32,14 +32,14 @@ jobs:
       - checkout
       - run:
           name: Get branch name of latest release from official repo
-          command: >-
+          command: |
             curl -sL https://api.github.com/repos/coralproject/talk/releases | \
-              jq -r ".[].tag_name" | grep -v rc | sort -nr -t. -k 1 -k 2 -k 3 | head -n 1 > /tmp/latest-branch-name && \
+              jq -r ".[].tag_name" | grep -v rc | sort -nr -t. -k 1 -k 2 -k 3 | head -n 1 > /tmp/latest-branch-name
             echo "REMOTE_BRANCH_NAME=$(cat /tmp/latest-branch-name)" >> $BASH_ENV
             echo ${REMOTE_BRANCH_NAME}
       - run:
           name: CheckOut application code from Git to build
-          command: >-
+          command:
             git clone -b ${REMOTE_BRANCH_NAME} --single-branch https://github.com/coralproject/talk
       - run:
           name: Get commit hash
