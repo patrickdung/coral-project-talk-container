@@ -39,7 +39,7 @@ jobs:
             ls -la ..
             ls -la .
             echo "$GITLAB_PASSWORD" | docker login --username "$GITLAB_USERNAME" --password-stdin registry.gitlab.com
-            docker build --squash \
+            DOCKER_CLI_EXPERIMENTAL=enabled docker build --squash \
               -t ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${REMOTE_BRANCH_NAME} \
               --build-arg REVISION_HASH=${COMMIT_HASH} \
               --build-arg LABEL_IMAGE_URL=https://github.com/coralproject/talk \
