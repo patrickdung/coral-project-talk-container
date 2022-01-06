@@ -1,30 +1,10 @@
 ---
-job_defaults: &job_defaults
-  resource_class: medium
-
-# job_node_environment will setup the environment for any job being executed.
-job_node_environment: &job_node_environment
-  NODE_ENV: "test"
-  WEBPACK_MAX_CORES: "2"
-  NODE_OPTIONS: "--max-old-space-size=4096"
-
-# job_node_defaults applies all the defaults for each job.
-job_node_defaults: &job_node_defaults
-  # working_directory: ~/coralproject/talk
-  <<: *job_defaults
-  working_directory: ~/patrickdung/coral-project-talk-container
-  docker:
-    - image: circleci/node:14
-  environment:
-    <<: *job_node_environment
-
 setup_remote_docker_defaults: &setup_remote_docker_defaults
   # This is pinned to 19 to resolve a problem described here:
   # https://discuss.circleci.com/t/docker-build-fails-with-nonsensical-eperm-operation-not-permitted-copyfile/37364/24
   version: 19.03.13
 
 version: 2.1
-executorType: machine
 jobs:
   # release_docker will build and push the Docker image.
   release_docker:
