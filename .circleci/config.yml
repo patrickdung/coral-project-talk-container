@@ -30,6 +30,13 @@ jobs:
           working_directory: talk
           command: |
             echo "COMMIT_HASH=$(git log --pretty=format:'%h' -n 1)" >> $BASH_ENV
+      - setup_remote_docker:
+          version: 19.03.14
+      - run: |
+          ssh remote-docker \<<EOF
+            sudo bash -c 'echo "{\"experimental\": true}" > /etc/docker/daemon.json'
+            sudo systemctl restart docker
+          EOF
       - deploy:
           name: Build container
           working_directory: talk
@@ -43,7 +50,7 @@ jobs:
               -t ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${REMOTE_BRANCH_NAME} \
               --build-arg REVISION_HASH=${COMMIT_HASH} \
               --build-arg LABEL_IMAGE_URL=https://github.com/coralproject/talk \
-              --build-arg LABEL_IMAGE_IMAGE=https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME} \
+              --build-arg LABEL_IMAGE_IMAGE=${CIRCLE_REPOSITORY_URL} \
                -f ../Dockerfile .
             docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${REMOTE_BRANCH_NAME}
           no_output_timeout: 30m
