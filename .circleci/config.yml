@@ -27,6 +27,9 @@ version: 2.1
 jobs:
   # release_docker will build and push the Docker image.
   release_docker:
+    machine:
+      image: ubuntu-2004:202101-01
+    resource_class: arm.medium
     <<: *job_node_defaults
     steps:
       - checkout
@@ -57,8 +60,11 @@ jobs:
             pwd
             ls -la ..
             ls -la .
-            docker build -t patrickdung/coral-project-talk-container:latest \
+            echo "$GITHUB_PASSWORD" | docker login -u "$GITHUB_USERNAME" -password-stdin registry.gitlab.com
+            docker build --squash \
+              -t ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${REMOTE_BRANCH_NAME} \
               --build-arg REVISION_HASH=${COMMIT_HASH} -f ../Dockerfile .
+            docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${REMOTE_BRANCH_NAME}
           no_output_timeout: 30m
 
 # filter_release will add the filters for a deploy job in a workflow to make it
