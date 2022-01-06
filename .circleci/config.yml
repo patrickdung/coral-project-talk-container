@@ -43,8 +43,7 @@ jobs:
       - run:
           name: Get commit hash
           command: >-
-            cd talk && echo "COMMIT_HASH=$(git log --pretty=format:'%h' -n 1)" >> $BASH_ENV && \
-            pwd && echo ${COMMIT_HASH}
+            cd talk && echo "COMMIT_HASH=$(git log --pretty=format:'%h' -n 1)" >> $BASH_ENV && pwd && echo ${COMMIT_HASH}
       - setup_remote_docker:
           <<: *setup_remote_docker_defaults
       - deploy:
