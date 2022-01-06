@@ -49,9 +49,8 @@ jobs:
       - deploy:
           name: Deploy the code
           command: >-
-            cd talk && \
-              docker build -t patrickdung/coral-project-talk-container:latest \
-                REVISION_HASH=${COMMIT_HASH} -f ../Dockerfile .
+            docker build -t patrickdung/coral-project-talk-container:latest \
+              REVISION_HASH=${COMMIT_HASH} -f ../Dockerfile .
           no_output_timeout: 30m
 
 # filter_release will add the filters for a deploy job in a workflow to make it
