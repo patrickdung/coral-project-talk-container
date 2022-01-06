@@ -30,13 +30,6 @@ jobs:
           working_directory: talk
           command: |
             echo "COMMIT_HASH=$(git log --pretty=format:'%h' -n 1)" >> $BASH_ENV
-      - setup_remote_docker:
-          version: 19.03.14
-      - run: |
-          ssh remote-docker \<<EOF
-            sudo bash -c 'echo "{\"experimental\": true}" > /etc/docker/daemon.json'
-            sudo systemctl restart docker
-          EOF
       - deploy:
           name: Build container
           working_directory: talk
