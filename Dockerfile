@@ -48,8 +48,9 @@ RUN set -eux && \
     npm prune --production
 
 USER root
+ENV DEBIAN_FRONTEND noninteractive
 RUN set -eux && \
-    apt-get purge gcc g++ && apt-get -y autoremove && apt-get -y clean && \
+    apt-get purge -y gcc g++ && apt-get -y autoremove && apt-get -y clean && \
     rm -rf /var/lib/apt/lists/*
 
 USER node
