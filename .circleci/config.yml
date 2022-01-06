@@ -38,17 +38,17 @@ jobs:
             pwd
             ls -la ..
             ls -la .
-            echo "$GITLAB_PASSWORD" | docker login --username "$GITLAB_USERNAME" --password-stdin registry.gitlab.com
+            echo "$GITLAB_PASSWORD" | docker login --username "$GITLAB_TOKEN" --password-stdin registry.gitlab.com
             # To use squash, the daemon needs to enable experimental feature
             sudo bash -c 'echo "{\"experimental\": true}" > /etc/docker/daemon.json'
             sudo systemctl restart docker
             DOCKER_CLI_EXPERIMENTAL=enabled docker build --squash \
-              -t ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${REMOTE_BRANCH_NAME} \
+              -t registry.gitlab.com/patrickdung/docker-images$/${CIRCLE_PROJECT_REPONAME}:${REMOTE_BRANCH_NAME} \
               --build-arg REVISION_HASH=${COMMIT_HASH} \
               --build-arg LABEL_IMAGE_URL=https://github.com/coralproject/talk \
               --build-arg LABEL_IMAGE_SOURCE=${CIRCLE_REPOSITORY_URL} \
                -f ../Dockerfile .
-            docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${REMOTE_BRANCH_NAME} registry.gitlab.com/patrickdung/docker-images/${CIRCLE_PROJECT_REPONAME}:${REMOTE_BRANCH_NAME}
+            docker push registry.gitlab.com/patrickdung/docker-images/${CIRCLE_PROJECT_REPONAME}:${REMOTE_BRANCH_NAME}
           no_output_timeout: 30m
 
 # filter_release will add the filters for a deploy job in a workflow to make it
