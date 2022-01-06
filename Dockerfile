@@ -19,7 +19,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN set -eux && \
     apt-get -y update && \
     apt-get -y install --no-install-suggests --no-install-recommends \
-    bash git sed make pkg-config python3 procps libjemalloc2 file coreutils && \
+    bash git sed make pkg-config python3 gcc g++ procps libjemalloc2 file coreutils && \
     apt-get -y upgrade && apt-get -y autoremove && apt-get -y clean && \
     rm -rf /var/lib/apt/lists/* && \
     if [ -e /usr/lib/aarch64-linux-gnu/libjemalloc.so.2 ] ; then ln -s /usr/lib/aarch64-linux-gnu/libjemalloc.so.2 /usr/lib/libjemalloc.so.2 ; fi && \
@@ -45,7 +45,9 @@ RUN set -eux && \
     git config --global url."https://".insteadOf ssh:// && \
     npm ci && \
     npm run build && \
-    npm prune --production
+    npm prune --production && \
+    apt-get purge gcc g++ && apt-get -y autoremove && apt-get -y clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Setup the environment
 ENV NODE_ENV production
