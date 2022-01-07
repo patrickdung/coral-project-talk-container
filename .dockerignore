@@ -1,3 +1,5 @@
+Dockerfile
+
 # tests are not run in the docker container.
 __tests__
 coverage
@@ -22,6 +24,7 @@ yarn.lock
 .docz
 *.swp
 *.DS_STORE
+.vscode
 
 # don't include any generated files
 dist

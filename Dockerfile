@@ -43,7 +43,7 @@ RUN set -eux && \
 
 # ----------------
 
-FROM docker.io/node:16-bullseye-slim
+FROM docker.io/node:14-bullseye-slim
 
 ARG LABEL_IMAGE_URL
 ARG LABEL_IMAGE_SOURCE
