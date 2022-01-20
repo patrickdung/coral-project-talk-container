@@ -140,13 +140,13 @@ jobs:
       matrix:
         include:
           # - arch: amd64
-          #   platform_image_uri: "${{needs.init-env.outputs.container_registry_base_uri}}@${{ needs.build-docker-image.outputs.container_digest_amd64 }}"
+          #   platform_image_uri: "${{needs.init-env.outputs.container_registry_base_uri}}@${{ needs.sign-docker-image.outputs.container_digest_amd64 }}"
           - arch: arm64
-            platform_image_uri: "${{needs.init-env.outputs.container_registry_base_uri}}@${{ needs.build-docker-image.outputs.container_digest_arm64 }}"
+            platform_image_uri: "${{needs.init-env.outputs.container_registry_base_uri}}@${{ needs.sign-docker-image.outputs.container_digest_arm64 }}"
     steps:
       - name: Set env REMOTE_BRANCH_NAME
         run: |
-          echo "REMOTE_BRANCH_NAME=${{ needs.build-docker-image.outputs.remote_branch_name }}" >> $GITHUB_ENV
+          echo "REMOTE_BRANCH_NAME=${{ needs.sign-docker-image.outputs.remote_branch_name }}" >> $GITHUB_ENV
 
       - name: Checkout this repository
         # some vuln scanner want to have the Dockerfile
@@ -349,40 +349,3 @@ jobs:
             # #${{matrix.arch}}-trivy-results.sarif
             # #${{ steps.scan-by-anchore.outputs.sarif }}
             ./*.sarif
-
-  build-tag-latest:
-    needs: [init-env, scan-docker-image, build-sbom-and-scanning]
-    name: Tag the latest containers
-    runs-on: ubuntu-latest
-    continue-on-error: false
-    permissions:
-      actions: none
-      checks: none
-      contents: none
-      deployments: none
-      issues: none
-      packages: none
-      pull-requests: none
-      repository-projects: none
-      security-events: none
-      statuses: none
-      # id-token: 'read'
-    steps:
-      - name: Set env REMOTE_BRANCH_NAME
-        run: |
-          echo "REMOTE_BRANCH_NAME=${{ needs.build-docker-image.outputs.remote_branch_name }}" >> $GITHUB_ENV
-      - name: Login to Registry provider
-        uses: docker/login-action@v1
-        with:
-          registry: ${{ env.CONTAINER_REGISTRY }}
-          # Quay.io
-          # username: ${{ secrets.QUAY_USERNAME }}
-          # password: ${{ secrets.QUAY_TOKEN }}
-          # GitHub
-          # username: ${{ github.actor }}
-          # password: ${{ secrets.PUBLISH_TOKEN }}
-          username: ${{ secrets.GITLAB_USERNAME }}
-          password: ${{ secrets.GITLAB_TOKEN }}
-      - name: Add the latest tag to the container image
-        run: |
-          skopeo copy --all docker://${{needs.init-env.outputs.container_registry_base_uri}}:${{env.REMOTE_BRANCH_NAME}} docker://${{needs.init-env.outputs.container_registry_base_uri}}:latest
