@@ -68,7 +68,7 @@ jobs:
         id: get-remote-branch-name
         run: |
           curl -sL https://api.github.com/repos/coralproject/talk/releases | \
-            jq -r ".tag_name" > /tmp/goatcounter-latest-branch-name
+            jq -r ".[].tag_name" | grep -v rc | sort -r -V | head -n 1 > /tmp/latest-branch-name
           echo "REMOTE_BRANCH_NAME=$(cat /tmp/latest-branch-name)" >> $GITHUB_ENV
           echo ${REMOTE_BRANCH_NAME}
           echo "::set-output name=remote_branch_name::$(cat /tmp/latest-branch-name)"

@@ -54,6 +54,7 @@ jobs:
           name: Trigger GH action
           command: |
             curl -X POST -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer ${GITHUB_DISPATCH_TOKEN}" \
             https://api.github.com/repos/patrickdung/${CIRCLE_PROJECT_REPONAME}/dispatches \
             -d '{"event_type":"build_container_completed"}'
 
