@@ -105,9 +105,10 @@ jobs:
       - name: "Get the digest of container (arm64)"
         id: get-container-digest-arm64
         run: |
-          curl -L https://github.com/google/go-containerregistry/releases/download/v0.8.0/go-containerregistry_Linux_x86_64.tar.gz | tar -zxf - crane gcrane
+          curl -L -O https://github.com/google/go-containerregistry/releases/download/v0.8.0/go-containerregistry_Linux_x86_64.tar.gz
           curl -L -O https://github.com/google/go-containerregistry/releases/download/v0.8.0/checksums.txt
           sha256sum -c checksums.txt --ignore-missing
+          tar -zxvf go-containerregistry_Linux_x86_64.tar.gz crane gcrane
           crane digest --platform linux/arm64 ${{needs.init-env.outputs.container_registry_base_uri}}:${{env.REMOTE_BRANCH_NAME}} > /tmp/container-digest-arm64
           echo "::set-output name=container_digest::$(cat /tmp/container-digest-arm64)"
 
