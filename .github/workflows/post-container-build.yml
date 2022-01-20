@@ -101,11 +101,11 @@ jobs:
       #      jq -r '.manifests[] | select(.platform .architecture=="amd64" and .platform .os=="linux") | .digest' > /tmp/container-digest-amd64
       #    echo "::set-output name=container_digest::$(cat /tmp/container-digest-amd64)"
 
+      # This container only have arm64, the syntax is not correct for jq
       - name: "Get the digest of container (arm64)"
         id: get-container-digest-arm64
         run: |
-          skopeo inspect --raw docker://${{needs.init-env.outputs.container_registry_base_uri}}:${{env.REMOTE_BRANCH_NAME}} | \
-            jq -r '.manifests[] | select(.platform .architecture=="arm64" and .platform .os=="linux") | .digest' > /tmp/container-digest-arm64
+          crane digest --platform linux/arm64 ${{needs.init-env.outputs.container_registry_base_uri}}:${{env.REMOTE_BRANCH_NAME}} > /tmp/container-digest-arm64
           echo "::set-output name=container_digest::$(cat /tmp/container-digest-arm64)"
 
       - name: Use Cosign to sign the image recursively
