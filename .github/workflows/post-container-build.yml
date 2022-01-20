@@ -16,7 +16,7 @@ jobs:
   init-env:
     name: Set env outputs
     runs-on: ubuntu-latest
-    continue-on-error: true
+    continue-on-error: false
     permissions:
       actions: none
       checks: none
@@ -122,7 +122,7 @@ jobs:
     needs: [init-env, sign-docker-image]
     name: Build SBOM and image scanning
     runs-on: ubuntu-latest
-    continue-on-error: true
+    continue-on-error: false
     permissions:
       actions: none
       checks: none
