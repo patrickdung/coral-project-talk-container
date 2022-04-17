@@ -313,31 +313,31 @@ jobs:
         with:
           sarif_file: ${{matrix.arch}}-container-snyk-results.sarif
 
-      - name: Sysdig Secure Inline Scan
-        id: scan
-        uses: sysdiglabs/scan-action@v3
-        with:
-          # Tag of the image to analyse
-          image-tag: "${{matrix.platform_image_uri}}"
-          sysdig-secure-token: ${{ secrets.SYSDIG_SECURE_TOKEN}}
-          # Sysdig secure endpoint. Please read: https://docs.sysdig.com/en/docs/administration/saas-regions-and-ip-ranges/
-          sysdig-secure-url: https://app.au1.sysdig.com
-          dockerfile-path: ./Dockerfile
-          input-type: docker-daemon
-          ignore-failed-scan: true
-          # Sysdig inline scanner requires privileged rights
-          run-as-user: root
-
-      - name: Rename Sysdig sarif with architecture name
-        run: |
-          mv ${{ steps.scan.outputs.sarifReport }} ${{matrix.arch}}-container-sysdig-results.sarif
-
-      - name: Upload Sysdig SARIF report to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v1
-        if: always()
-        with:
-          sarif_file: '${{matrix.arch}}-container-sysdig-results.sarif'
-          category: sysdig-${{matrix.arch}}
+#      - name: Sysdig Secure Inline Scan
+#        id: scan
+#        uses: sysdiglabs/scan-action@v3
+#        with:
+#          # Tag of the image to analyse
+#          image-tag: "${{matrix.platform_image_uri}}"
+#          sysdig-secure-token: ${{ secrets.SYSDIG_SECURE_TOKEN}}
+#          # Sysdig secure endpoint. Please read: https://docs.sysdig.com/en/docs/administration/saas-regions-and-ip-ranges/
+#          sysdig-secure-url: https://app.au1.sysdig.com
+#          dockerfile-path: ./Dockerfile
+#          input-type: docker-daemon
+#          ignore-failed-scan: true
+#          # Sysdig inline scanner requires privileged rights
+#          run-as-user: root
+#
+#      - name: Rename Sysdig sarif with architecture name
+#        run: |
+#          mv ${{ steps.scan.outputs.sarifReport }} ${{matrix.arch}}-container-sysdig-results.sarif
+#
+#      - name: Upload Sysdig SARIF report to GitHub Security tab
+#        uses: github/codeql-action/upload-sarif@v1
+#        if: always()
+#        with:
+#          sarif_file: '${{matrix.arch}}-container-sysdig-results.sarif'
+#          category: sysdig-${{matrix.arch}}
 
       # - name: Inspect SARIF report(s)
       #  run: |
