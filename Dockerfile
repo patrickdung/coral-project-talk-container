@@ -11,6 +11,7 @@ ARG ARCH="arm64"
 ARG TARGETARCH
 
 ENV DEBIAN_FRONTEND noninteractive
+ENV NODE_OPTIONS=--max_old_space_size=4096
 RUN set -eux && \
     apt-get -y update && \
     apt-get -y install --no-install-suggests --no-install-recommends \
