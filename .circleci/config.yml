@@ -12,6 +12,9 @@ jobs:
       # image: ubuntu-2004:202101-01
       image: ubuntu-2004:202201-02
     resource_class: arm.medium
+    environment:
+      WEBPACK_MAX_CORES: "2"
+      NODE_OPTIONS: "--max-old-space-size=4096"
     steps:
       - checkout
       - run:
