@@ -265,7 +265,7 @@ jobs:
           severity: 'CRITICAL,HIGH'
 
       - name: Upload Trivy SARIF report to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v1
+        uses: github/codeql-action/upload-sarif@v2
         if: always()
         with:
           sarif_file: '${{matrix.arch}}-container-trivy-results.sarif'
@@ -285,7 +285,7 @@ jobs:
           mv results.sarif ${{matrix.arch}}-container-anchore-results.sarif
 
       - name: Upload Anchore SARIF report to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v1
+        uses: github/codeql-action/upload-sarif@v2
         if: always()
         with:
           # the steps outputs would contain './'
@@ -308,7 +308,7 @@ jobs:
           mv snyk.sarif ${{matrix.arch}}-container-snyk-results.sarif
 
       - name: Upload result to GitHub Code Scanning security tab
-        uses: github/codeql-action/upload-sarif@v1
+        uses: github/codeql-action/upload-sarif@v2
         if: always()
         with:
           sarif_file: ${{matrix.arch}}-container-snyk-results.sarif
@@ -333,7 +333,7 @@ jobs:
 #          mv ${{ steps.scan.outputs.sarifReport }} ${{matrix.arch}}-container-sysdig-results.sarif
 #
 #      - name: Upload Sysdig SARIF report to GitHub Security tab
-#        uses: github/codeql-action/upload-sarif@v1
+#        uses: github/codeql-action/upload-sarif@v2
 #        if: always()
 #        with:
 #          sarif_file: '${{matrix.arch}}-container-sysdig-results.sarif'
