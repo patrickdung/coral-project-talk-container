@@ -21,8 +21,10 @@ jobs:
       - run:
           name: Get branch name of latest release from official repo
           command: |
+            # 2023-Feb 7.4.7 did not add the v in front of the version
+            # previous: sort -r -V
             curl -sL https://api.github.com/repos/coralproject/talk/releases | \
-              jq -r ".[].tag_name" | grep -v rc | sort -r -V | head -n 1 > /tmp/latest-branch-name
+              jq -r ".[].tag_name" | grep -v rc | sort -r -h | head -n 1 > /tmp/latest-branch-name
             echo "REMOTE_BRANCH_NAME=$(cat /tmp/latest-branch-name)" >> $BASH_ENV
             cat /tmp/latest-branch-name
             echo ${REMOTE_BRANCH_NAME}
