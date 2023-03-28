@@ -10,7 +10,7 @@ jobs:
   release_docker:
     machine:
       #image: ubuntu-2004:202201-02
-      image: ubuntu-2204:2022.10.2
+      image: ubuntu-2204:2023.02.1
     resource_class: arm.medium
     # not effective
     #environment:
