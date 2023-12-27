@@ -103,7 +103,8 @@ RUN set -eux && \
 COPY --from=build --chown=node:node /usr/src/app /usr/src/app
 
 USER node
-WORKDIR /usr/src/app
+#WORKDIR /usr/src/app
+WORKDIR /usr/src/app/server
 
 # Setup the environment
 ENV NODE_ENV production
