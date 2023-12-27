@@ -11,7 +11,7 @@ ARG ARCH="arm64"
 ARG TARGETARCH
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV NODE_OPTIONS=--max_old_space_size=4096
+ENV NODE_OPTIONS=--max_old_space_size=8192
 RUN set -eux && \
     apt-get -y update && \
     apt-get -y install --no-install-suggests --no-install-recommends \
@@ -37,10 +37,47 @@ USER node
 # Install build static assets and clear caches.
 RUN set -eux && \
     git config --global url."https://github.com/".insteadOf ssh://git@github.com/ && \
-    git config --global url."https://".insteadOf ssh:// && \
-    npm ci && \
-    npm run build && \
-    npm prune --production
+    git config --global url."https://".insteadOf ssh://
+
+# Initialize sub packages
+RUN set -eux && \
+  cd config && npm ci && \
+  cd ../common && npm ci && \
+  cd ../client && npm ci && \
+  cd ../server && npm ci && \
+  cd ..
+
+# Generate schema types for common/ to use
+RUN set -eux && \
+  cd server && \
+  npm run generate && \
+  cd ..
+
+# Build config, prune static assets
+RUN set -eux && \
+  cd config && \
+  npm run build && \
+  cd ..
+
+# Build common, prune static assets
+RUN set -eux && \
+  cd common && \
+  npm run build && \
+  cd ..
+
+# Build client, prune static assets
+RUN set -eux && \
+  cd client && \
+  npm run build && \
+  npm prune --production && \
+  cd ..
+
+# Install, build server, prune static assets
+RUN set -eux && \
+  cd server && \
+  npm run build && \
+  npm prune --production && \
+  cd ..
 
 # ----------------
 
