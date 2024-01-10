@@ -40,7 +40,7 @@ jobs:
           working_directory: talk
           command: |
             echo "COMMIT_HASH=$(git log --pretty=format:'%h' -n 1)" >> $BASH_ENV
-      - deploy:
+      - run:
           name: Build container
           working_directory: talk
           command: |

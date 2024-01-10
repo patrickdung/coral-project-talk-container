@@ -11,14 +11,15 @@ ARG ARCH="arm64"
 ARG TARGETARCH
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV NODE_OPTIONS="--max_old_space_size=14000 --openssl-legacy-provider --no-experimental-fetch"
+#ENV NODE_OPTIONS="--max_old_space_size=14000 --openssl-legacy-provider --no-experimental-fetch"
+ENV NODE_OPTIONS="--max_old_space_size=14000"
 RUN set -eux && \
     apt-get -y update && \
     apt-get -y install --no-install-suggests --no-install-recommends \
     bash git make pkg-config python3 gcc g++ coreutils && \
     apt-get -y upgrade && apt-get -y autoremove && apt-get -y clean && \
     rm -rf /var/lib/apt/lists/* && \
-    npm install -g npm@8.0.0 && \
+    npm install -g npm@10.2.5 && \
     mkdir -p /usr/src/app && \
     mkdir -p dist/core/common/__generated__ && \
     echo "{\"revision\": \"${REVISION_HASH}\"}" > dist/core/common/__generated__/revision.json
@@ -96,7 +97,7 @@ RUN set -eux && \
     apt-get -y upgrade && apt-get -y autoremove && apt-get -y clean && \
     rm -rf /var/lib/apt/lists/* && \
     if [ -e /usr/lib/aarch64-linux-gnu/libjemalloc.so.2 ] ; then ln -s /usr/lib/aarch64-linux-gnu/libjemalloc.so.2 /usr/lib/libjemalloc.so.2 ; fi && \
-    npm install -g npm@8.0.0 && \
+    npm install -g npm@10.2.5 && \
     mkdir -p /usr/src/app && \
     chown node:node /usr/src/app
 
