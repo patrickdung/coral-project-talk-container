@@ -2,7 +2,7 @@
 #
 # Copyright (c) 2021 Patrick Dung
 
-FROM docker.io/node:18-bookworm-slim as build
+FROM docker.io/node:16-bookworm-slim as build
 
 ARG REVISION_HASH
 ARG ARCH="arm64"
@@ -82,7 +82,7 @@ RUN set -eux && \
 
 # ----------------
 
-FROM docker.io/node:18-bookworm-slim
+FROM docker.io/node:16-bookworm-slim
 
 ARG LABEL_IMAGE_URL
 ARG LABEL_IMAGE_SOURCE
