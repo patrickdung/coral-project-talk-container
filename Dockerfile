@@ -11,7 +11,7 @@ ARG ARCH="arm64"
 ARG TARGETARCH
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV NODE_OPTIONS="--max_old_space_size=8192 --openssl-legacy-provider --no-experimental-fetch"
+ENV NODE_OPTIONS="--max_old_space_size=14000 --openssl-legacy-provider --no-experimental-fetch"
 RUN set -eux && \
     apt-get -y update && \
     apt-get -y install --no-install-suggests --no-install-recommends \
