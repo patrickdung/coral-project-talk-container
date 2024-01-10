@@ -2,7 +2,7 @@
 #
 # Copyright (c) 2021 Patrick Dung
 
-FROM docker.io/node:14-bullseye-slim as build
+FROM docker.io/node:18-bookworm-slim as build
 
 ARG REVISION_HASH
 ARG ARCH="arm64"
@@ -11,7 +11,7 @@ ARG ARCH="arm64"
 ARG TARGETARCH
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV NODE_OPTIONS=--max_old_space_size=8192
+ENV NODE_OPTIONS="--max_old_space_size=8192 --openssl-legacy-provider --no-experimental-fetch"
 RUN set -eux && \
     apt-get -y update && \
     apt-get -y install --no-install-suggests --no-install-recommends \
@@ -81,7 +81,7 @@ RUN set -eux && \
 
 # ----------------
 
-FROM docker.io/node:14-bullseye-slim
+FROM docker.io/node:18-bookworm-slim
 
 ARG LABEL_IMAGE_URL
 ARG LABEL_IMAGE_SOURCE
