@@ -2,7 +2,7 @@
 #
 # Copyright (c) 2021 Patrick Dung
 
-FROM docker.io/node:16-bookworm-slim as build
+FROM docker.io/node:18-bookworm-slim as build
 
 ARG REVISION_HASH
 ARG ARCH="arm64"
@@ -38,7 +38,11 @@ USER node
 # Install build static assets and clear caches.
 RUN set -eux && \
     git config --global url."https://github.com/".insteadOf ssh://git@github.com/ && \
-    git config --global url."https://".insteadOf ssh://
+    git config --global url."https://".insteadOf ssh:// && \
+    npm config set fetch-retries 5 && \
+    npm config set fetch-retry-mintimeout 600000 && \
+    npm config set fetch-retry-maxtimeout 1200000 && \
+    npm config set fetch-timeout 1800000
 
 # Initialize sub packages
 RUN set -eux && \
@@ -82,7 +86,7 @@ RUN set -eux && \
 
 # ----------------
 
-FROM docker.io/node:16-bookworm-slim
+FROM docker.io/node:18-bookworm-slim
 
 ARG LABEL_IMAGE_URL
 ARG LABEL_IMAGE_SOURCE
