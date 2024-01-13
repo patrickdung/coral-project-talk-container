@@ -11,9 +11,9 @@ ENV NODE_OPTIONS="--max-old-space-size=12000 --openssl-legacy-provider --no-expe
 # Install build dependancies.
 # Create app directory.
 
-# add libc-dev for linux/unistd.h not found in alpine
+# add linux-headers for linux/unistd.h not found in alpine
 
-RUN apk --no-cache --update add g++ make git python3 libc-dev \
+RUN apk --no-cache --update add g++ make git python3 linux-headers \
   && rm -rf /var/cache/apk/* && \
   npm install -g npm@8.0.0 && \
   mkdir -p /usr/src/app
@@ -40,6 +40,8 @@ USER node
 # Build common, prune static assets
 # Build client, prune static assets
 # Install, build server, prune static assets
+  #mkdir -p /usr/include/linux && \
+  #echo "#include <unistd.h>" > /usr/include/linux/unistd.h && \
 RUN git config --global url."https://github.com/".insteadOf ssh://git@github.com/ && \
     git config --global url."https://".insteadOf ssh:// && \
   cd config && npm ci && \
