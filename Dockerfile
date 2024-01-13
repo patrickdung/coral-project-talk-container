@@ -15,7 +15,7 @@ ENV GENERATE_SOURCEMAP=false
 
 # add linux-headers for linux/unistd.h not found in alpine
 
-RUN apk --no-cache --update add g++ make git python3 linux-headers \
+RUN apk --no-cache --update add g++ make git python3 linux-headers sed \
   && rm -rf /var/cache/apk/* && \
   npm install -g npm@8.0.0 && \
   mkdir -p /usr/src/app
@@ -35,6 +35,7 @@ RUN mkdir -p dist/core/common/__generated__ && \
 RUN chown -R node /usr/src/app
 USER node
 
+# in 8.7.0 the package.json seems to override the NODE_OPTIONS
 ENV NODE_OPTIONS="--max-old-space-size=15000 --openssl-legacy-provider --no-experimental-fetch"
 ENV GENERATE_SOURCEMAP=false
 
@@ -69,10 +70,12 @@ RUN set -eux && \
   npm run build && \
   cd .. && \
   cd client && \
-  npm --max-old-space-size=12000 run build && \
+  sed -i -E 's|--openssl-legacy-provider|--openssl-legacy-provider --max-old-space-size=12000|g' package.json && \
+  npm run build && \
   npm prune --production && \
   cd .. && \
-  cd --max-old-space-size=12000 server && \
+  cd server && \
+  sed -i -E 's|--openssl-legacy-provider|--openssl-legacy-provider --max-old-space-size=12000|g' package.json && \
   npm run build && \
   npm prune --production && \
   cd ..
