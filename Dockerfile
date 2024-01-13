@@ -5,6 +5,7 @@
 
 FROM docker.io/node:18-alpine
 
+# seems not effective when npm is run
 ENV NODE_OPTIONS="--max-old-space-size=8192 --openssl-legacy-provider --no-experimental-fetch"
 #ENV NODE_OPTIONS="--max-old-space-size=15000 --openssl-legacy-provider --no-experimental-fetch"
 ENV GENERATE_SOURCEMAP=false
@@ -45,6 +46,10 @@ USER node
   #echo "#include <unistd.h>" > /usr/include/linux/unistd.h && \
 RUN git config --global url."https://github.com/".insteadOf ssh://git@github.com/ && \
     git config --global url."https://".insteadOf ssh:// && \
+  npm config set fetch-retries 5 && \
+  npm config set fetch-retry-mintimeout 600000 && \
+  npm config set fetch-retry-maxtimeout 1200000 && \
+  npm config set fetch-timeout 1800000 && \
   cd config && npm ci && \
   cd ../common && npm ci && \
   cd ../client && npm ci && \
@@ -60,10 +65,10 @@ RUN git config --global url."https://github.com/".insteadOf ssh://git@github.com
   npm run build && \
   cd .. && \
   cd client && \
-  npm run build && \
+  npm --max-old-space-size=12000 run build && \
   npm prune --production && \
   cd .. && \
-  cd server && \
+  cd --max-old-space-size=12000 server && \
   npm run build && \
   npm prune --production && \
   cd ..
