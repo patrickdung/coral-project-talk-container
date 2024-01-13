@@ -7,6 +7,7 @@ FROM docker.io/node:18-alpine
 
 #ENV NODE_OPTIONS="--max-old-space-size=8192 --openssl-legacy-provider --no-experimental-fetch"
 ENV NODE_OPTIONS="--max-old-space-size=15000 --openssl-legacy-provider --no-experimental-fetch"
+ENV GENERATE_SOURCEMAP=false
 
 # Install build dependancies.
 # Create app directory.
