@@ -11,7 +11,9 @@ ENV NODE_OPTIONS="--max-old-space-size=12000 --openssl-legacy-provider --no-expe
 # Install build dependancies.
 # Create app directory.
 
-RUN apk --no-cache --update add g++ make git python3 \
+# add libc-dev for linux/unistd.h not found in alpine
+
+RUN apk --no-cache --update add g++ make git python3 libc-dev \
   && rm -rf /var/cache/apk/* && \
   npm install -g npm@8.0.0 && \
   mkdir -p /usr/src/app
