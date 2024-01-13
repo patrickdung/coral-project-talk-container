@@ -6,8 +6,8 @@
 FROM docker.io/node:18-alpine
 
 # seems not effective when npm is run
+# try to set it again after USER is set
 ENV NODE_OPTIONS="--max-old-space-size=8192 --openssl-legacy-provider --no-experimental-fetch"
-#ENV NODE_OPTIONS="--max-old-space-size=15000 --openssl-legacy-provider --no-experimental-fetch"
 ENV GENERATE_SOURCEMAP=false
 
 # Install build dependancies.
@@ -35,6 +35,9 @@ RUN mkdir -p dist/core/common/__generated__ && \
 RUN chown -R node /usr/src/app
 USER node
 
+ENV NODE_OPTIONS="--max-old-space-size=15000 --openssl-legacy-provider --no-experimental-fetch"
+ENV GENERATE_SOURCEMAP=false
+
 # Node alpine image does not include ssh. This is a workaround for https://github.com/npm/cli/issues/2610.
 # Initialize sub packages
 # Generate schema types for common/ to use
@@ -44,8 +47,9 @@ USER node
 # Install, build server, prune static assets
   #mkdir -p /usr/include/linux && \
   #echo "#include <unistd.h>" > /usr/include/linux/unistd.h && \
-RUN git config --global url."https://github.com/".insteadOf ssh://git@github.com/ && \
-    git config --global url."https://".insteadOf ssh:// && \
+RUN set -eux && \
+  git config --global url."https://github.com/".insteadOf ssh://git@github.com/ && \
+  git config --global url."https://".insteadOf ssh:// && \
   npm config set fetch-retries 5 && \
   npm config set fetch-retry-mintimeout 600000 && \
   npm config set fetch-retry-maxtimeout 1200000 && \
