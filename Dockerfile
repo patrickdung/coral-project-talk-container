@@ -88,7 +88,7 @@ ARG LABEL_IMAGE_SOURCE
 LABEL org.opencontainers.image.url=${LABEL_IMAGE_URL}
 LABEL org.opencontainers.image.source=${LABEL_IMAGE_SOURCE}
 
-RUN apk --no-cache --update \
+RUN apk --no-cache --update add \
   tini bash python3 \
   && rm -rf /var/cache/apk/* && \
   npm install -g npm@8.0.0 && \
