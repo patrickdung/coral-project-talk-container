@@ -88,12 +88,11 @@ ARG LABEL_IMAGE_SOURCE
 LABEL org.opencontainers.image.url=${LABEL_IMAGE_URL}
 LABEL org.opencontainers.image.source=${LABEL_IMAGE_SOURCE}
 
-RUN apk --no-cache --update add --virtual .build-deps \
+RUN apk --no-cache --update \
   tini bash python3 \
   && rm -rf /var/cache/apk/* && \
   npm install -g npm@8.0.0 && \
   mkdir -p /usr/src/app && \
-  apk del .build-deps && \
   chown node:node /usr/src/app
 
 COPY --from=build --chown=node:node /usr/src/app /usr/src/app
