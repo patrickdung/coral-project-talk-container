@@ -108,7 +108,8 @@ ENV NODE_ENV production
 ENV PORT 5000
 EXPOSE 5000
 
-ENTRYPOINT ["tini", "--"]
+# /sbin/tini for alpine
+ENTRYPOINT ["/sbin/tini", "--"]
 
 # Run the node process directly instead of using `npm run start`:
 # SEE: https://github.com/nodejs/docker-node/blob/a2eb9f80b0fd224503ee2678867096c9e19a51c2/docs/BestPractices.md#cmd
