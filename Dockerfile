@@ -95,7 +95,7 @@ RUN set -eux && \
     tini bash python3 procps libjemalloc2 && \
     apt-get -y upgrade && apt-get -y autoremove && apt-get -y clean && \
     rm -rf /var/lib/apt/lists/* && \
-    if [ -e /usr/lib/aarch64-linux-gnu/libjemalloc.so.2 ] ; then ln -s /usr/lib/aarch64-  linux-gnu/libjemalloc.so.2 /usr/lib/libjemalloc.so.2 ; fi && \
+    if [ -e /usr/lib/aarch64-linux-gnu/libjemalloc.so.2 ] ; then ln -s /usr/lib/aarch64-linux-gnu/libjemalloc.so.2 /usr/lib/libjemalloc.so.2 ; fi && \
     npm install -g npm@8.0.0 && \
     mkdir -p /usr/src/app && \
     chown node:node /usr/src/app
