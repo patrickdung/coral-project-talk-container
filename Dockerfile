@@ -81,7 +81,7 @@ RUN set -eux && \
 
 # -----
 
-FROM docker.io/node:18-alpine as build
+FROM docker.io/node:18-alpine
 
 ARG LABEL_IMAGE_URL
 ARG LABEL_IMAGE_SOURCE
