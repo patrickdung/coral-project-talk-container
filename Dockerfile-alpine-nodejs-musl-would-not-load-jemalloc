@@ -89,7 +89,7 @@ LABEL org.opencontainers.image.url=${LABEL_IMAGE_URL}
 LABEL org.opencontainers.image.source=${LABEL_IMAGE_SOURCE}
 
 RUN apk --no-cache --update add \
-  tini bash python3 \
+  tini bash python3 jemalloc \
   && rm -rf /var/cache/apk/* && \
   npm install -g npm@8.0.0 && \
   mkdir -p /usr/src/app && \
@@ -105,6 +105,7 @@ WORKDIR /usr/src/app/server
 # Setup the environment
 ENV NODE_ENV production
 ENV PORT 5000
+ENV LD_LIBRARY_PATH /usr/lib/libjemalloc.so.2
 EXPOSE 5000
 
 # /sbin/tini for alpine
