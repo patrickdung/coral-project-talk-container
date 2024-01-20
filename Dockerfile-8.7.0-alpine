@@ -3,12 +3,11 @@
 # Copyright 2020 Vox Media, Inc
 # Copyright (c) 2021 Patrick Dung
 
-FROM docker.io/node:18-alpine
+FROM docker.io/node:18-alpine as build
 
 # seems not effective when npm is run
 # try to set it again after USER is set
 ENV NODE_OPTIONS="--max-old-space-size=8192 --openssl-legacy-provider --no-experimental-fetch"
-ENV GENERATE_SOURCEMAP=false
 
 # Install build dependancies.
 # Create app directory.
@@ -80,6 +79,26 @@ RUN set -eux && \
   npm prune --production && \
   cd ..
 
+# -----
+
+FROM docker.io/node:18-alpine
+
+ARG LABEL_IMAGE_URL
+ARG LABEL_IMAGE_SOURCE
+LABEL org.opencontainers.image.url=${LABEL_IMAGE_URL}
+LABEL org.opencontainers.image.source=${LABEL_IMAGE_SOURCE}
+
+RUN apk --no-cache --update add \
+  tini bash python3 \
+  && rm -rf /var/cache/apk/* && \
+  npm install -g npm@8.0.0 && \
+  mkdir -p /usr/src/app && \
+  chown node:node /usr/src/app
+
+COPY --from=build --chown=node:node /usr/src/app /usr/src/app
+
+USER node
+#WORKDIR /usr/src/app
 # Set working directory within server folder
 WORKDIR /usr/src/app/server
 
@@ -87,6 +106,9 @@ WORKDIR /usr/src/app/server
 ENV NODE_ENV production
 ENV PORT 5000
 EXPOSE 5000
+
+# /sbin/tini for alpine
+ENTRYPOINT ["/sbin/tini", "--"]
 
 # Run the node process directly instead of using `npm run start`:
 # SEE: https://github.com/nodejs/docker-node/blob/a2eb9f80b0fd224503ee2678867096c9e19a51c2/docs/BestPractices.md#cmd
