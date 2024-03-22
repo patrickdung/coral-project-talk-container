@@ -60,14 +60,14 @@ RUN set -eux && \
   pnpm config set fetch-retry-mintimeout 600000 && \
   pnpm config set fetch-retry-maxtimeout 1200000 && \
   pnpm config set fetch-timeout 1800000 && \
-  cd config && pnpm ci && \
-  cd ../common && pnpm ci && \
+  cd config && npm ci && \
+  cd ../common && npm ci && \
   cd ../client && \
   sed -i -E 's|--openssl-legacy-provider|--openssl-legacy-provider --max-old-space-size=12000|g' package.json && \
-  pnpm ci && \
+  npm ci && \
   cd ../server && \
   sed -i -E 's|--openssl-legacy-provider|--openssl-legacy-provider --max-old-space-size=12000|g' package.json && \
-  pnpm ci && \
+  npm ci && \
   cd .. && \
   cd server && \
   pnpm run generate && \
