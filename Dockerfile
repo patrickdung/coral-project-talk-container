@@ -60,14 +60,14 @@ RUN set -eux && \
   pnpm config set fetch-retry-mintimeout 600000 && \
   pnpm config set fetch-retry-maxtimeout 1200000 && \
   pnpm config set fetch-timeout 1800000 && \
-  cd config && npm ci && \
-  cd ../common && npm ci && \
+  cd config && pnpm install --frozen-lockfile && \
+  cd ../common && pnpm install --frozen-lockfile && \
   cd ../client && \
   sed -i -E 's|--openssl-legacy-provider|--openssl-legacy-provider --max-old-space-size=12000|g' package.json && \
-  npm ci && \
+  pnpm install --frozen-lockfile && \
   cd ../server && \
   sed -i -E 's|--openssl-legacy-provider|--openssl-legacy-provider --max-old-space-size=12000|g' package.json && \
-  npm ci && \
+  cd ../server && pnpm install --frozen-lockfile && \
   cd .. && \
   cd server && \
   pnpm run generate && \
