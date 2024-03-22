@@ -21,7 +21,7 @@ ENV NODE_OPTIONS="--max_old_space_size=8192 --openssl-legacy-provider --no-exper
 RUN set -eux && \
     apt-get -y update && \
     apt-get -y install --no-install-suggests --no-install-recommends \
-    bash git make pkg-config python3 gcc g++ coreutils sed && \
+    bash git make pkg-config python3 gcc g++ coreutils sed ca-certificates && \
     apt-get -y upgrade && apt-get -y autoremove && apt-get -y clean && \
     rm -rf /var/lib/apt/lists/* && \
     npm install -g pnpm@8.14.3 && \
@@ -41,6 +41,7 @@ RUN set -eux && chown -R node /usr/src/app
 USER node
 
 ENV GENERATE_SOURCEMAP=false
+ENV NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt
 
 # Node alpine image does not include ssh. This is a workaround for https://github.com/npm/cli/issues/2610.
 # Install build static assets and clear caches.
