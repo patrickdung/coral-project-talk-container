@@ -24,7 +24,7 @@ RUN set -eux && \
     bash git make pkg-config python3 gcc g++ coreutils sed && \
     apt-get -y upgrade && apt-get -y autoremove && apt-get -y clean && \
     rm -rf /var/lib/apt/lists/* && \
-    npm install -g npm@8.0.0 && \
+    npm install -g pnpm@8.14.3 && \
     mkdir -p /usr/src/app && \
     mkdir -p dist/core/common/__generated__ && \
     echo "{\"revision\": \"${REVISION_HASH}\"}" > dist/core/common/__generated__/revision.json
@@ -56,35 +56,35 @@ ENV GENERATE_SOURCEMAP=false
 RUN set -eux && \
   git config --global url."https://github.com/".insteadOf ssh://git@github.com/ && \
   git config --global url."https://".insteadOf ssh:// && \
-  npm config set fetch-retries 5 && \
-  npm config set fetch-retry-mintimeout 600000 && \
-  npm config set fetch-retry-maxtimeout 1200000 && \
-  npm config set fetch-timeout 1800000 && \
-  cd config && npm ci && \
-  cd ../common && npm ci && \
+  pnpm config set fetch-retries 5 && \
+  pnpm config set fetch-retry-mintimeout 600000 && \
+  pnpm config set fetch-retry-maxtimeout 1200000 && \
+  pnpm config set fetch-timeout 1800000 && \
+  cd config && pnpm ci && \
+  cd ../common && pnpm ci && \
   cd ../client && \
   sed -i -E 's|--openssl-legacy-provider|--openssl-legacy-provider --max-old-space-size=12000|g' package.json && \
-  npm ci && \
+  pnpm ci && \
   cd ../server && \
   sed -i -E 's|--openssl-legacy-provider|--openssl-legacy-provider --max-old-space-size=12000|g' package.json && \
-  npm ci && \
+  pnpm ci && \
   cd .. && \
   cd server && \
-  npm run generate && \
+  pnpm run generate && \
   cd .. && \
   cd config && \
-  npm run build && \
+  pnpm run build && \
   cd .. && \
   cd common && \
-  npm run build && \
+  pnpm run build && \
   cd .. && \
   cd client && \
-  npm run build && \
-  npm prune --production && \
+  pnpm run build && \
+  pnpm prune --production && \
   cd .. && \
   cd server && \
-  npm run build && \
-  npm prune --production && \
+  pnpm run build && \
+  pnpm prune --production && \
   cd ..
 
 # Initialize sub packages
@@ -145,7 +145,7 @@ RUN set -eux && \
     apt-get -y upgrade && apt-get -y autoremove && apt-get -y clean && \
     rm -rf /var/lib/apt/lists/* && \
     if [ -e /usr/lib/aarch64-linux-gnu/libjemalloc.so.2 ] ; then ln -s /usr/lib/aarch64-linux-gnu/libjemalloc.so.2 /usr/lib/libjemalloc.so.2 ; fi && \
-    npm install -g npm@8.0.0 && \
+    npm install -g pnpm@8.14.3 && \
     mkdir -p /usr/src/app && \
     chown node:node /usr/src/app
 
