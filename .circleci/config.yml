@@ -9,8 +9,8 @@ jobs:
   # release_docker will build and push the Docker image.
   release_docker:
     machine:
-      #image: ubuntu-2204:2023.02.1
-      image: ubuntu-2204:2023.10.1
+      # image: ubuntu-2204:2023.10.1
+      image: ubuntu-2204:2024.04.3
     #resource_class: arm.medium
     resource_class: arm.large
     # not effective
