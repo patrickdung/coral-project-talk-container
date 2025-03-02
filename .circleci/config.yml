@@ -48,8 +48,8 @@ jobs:
             pwd
             ls -la ..
             ls -la .
-            # echo "$GITHUB_TOKEN" | docker login --username "$GITHUB_USERNAME" --password-stdin ghcr.io
-            docker login -u "$GITHUB_USERNAME" -p "$GITHUB_TOKEN" ghcr.io
+            echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin ghcr.io
+            # docker login -u "$GITHUB_USERNAME" -p "$GITHUB_TOKEN" ghcr.io
             # To use squash, the daemon needs to enable experimental feature
             sudo bash -c 'echo "{\"experimental\": true}" > /etc/docker/daemon.json'
             sudo systemctl restart docker
@@ -60,7 +60,7 @@ jobs:
               --build-arg LABEL_IMAGE_SOURCE=${CIRCLE_REPOSITORY_URL} \
                -f ../Dockerfile .
             docker push ghcr.io/patrickdung/${CIRCLE_PROJECT_REPONAME}:${REMOTE_BRANCH_NAME}
-          no_output_timeout: 30m
+          no_output_timeout: 18m
       - run:
           name: Trigger GH action
           command: |
