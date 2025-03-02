@@ -49,7 +49,7 @@ jobs:
             ls -la ..
             ls -la .
             # echo "$GITHUB_TOKEN" | docker login --username "$GITHUB_USERNAME" --password-stdin ghcr.io
-            docker -u "$GITHUB_USERNAME" -p "$GITHUB_TOKEN" ghcr.io
+            docker login -u "$GITHUB_USERNAME" -p "$GITHUB_TOKEN" ghcr.io
             # To use squash, the daemon needs to enable experimental feature
             sudo bash -c 'echo "{\"experimental\": true}" > /etc/docker/daemon.json'
             sudo systemctl restart docker
