@@ -6,7 +6,7 @@
 # openssl 3 on bookworm would have build problem
 #FROM docker.io/node:18-bullseye-slim as build
 #FROM docker.io/node:20-bullseye-slim as build
-FROM public.ecr.aws/docker/library/node:20-bullseye-slim AS assets
+FROM public.ecr.aws/docker/library/node:20-bullseye-slim AS build
 
 ARG REVISION_HASH
 ARG ARCH="arm64"
@@ -133,7 +133,7 @@ RUN set -eux && \
 
 #FROM docker.io/node:18-bullseye-slim
 #FROM docker.io/node:20-bullseye-slim
-FROM public.ecr.aws/docker/library/node:20-trixie-slim AS assets
+FROM public.ecr.aws/docker/library/node:20-trixie-slim
 
 ARG LABEL_IMAGE_URL
 ARG LABEL_IMAGE_SOURCE
