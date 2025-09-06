@@ -5,7 +5,8 @@
 # as of 8.7.0, need to use bullseye to build
 # openssl 3 on bookworm would have build problem
 #FROM docker.io/node:18-bullseye-slim as build
-FROM docker.io/node:20-bullseye-slim as build
+#FROM docker.io/node:20-bullseye-slim as build
+FROM public.ecr.aws/docker/library/node:20-bullseye-slim AS assets
 
 ARG REVISION_HASH
 ARG ARCH="arm64"
@@ -13,7 +14,7 @@ ARG ARCH="arm64"
 # With Docker's buildx, TARGETARCH gives out amd64/arm64
 ARG TARGETARCH
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Not effective when npm is run
 ENV NODE_OPTIONS="--max_old_space_size=8192 --openssl-legacy-provider --no-experimental-fetch"
@@ -131,14 +132,15 @@ RUN set -eux && \
 # ----------------
 
 #FROM docker.io/node:18-bullseye-slim
-FROM docker.io/node:20-bullseye-slim
+#FROM docker.io/node:20-bullseye-slim
+FROM public.ecr.aws/docker/library/node:20-trixie-slim AS assets
 
 ARG LABEL_IMAGE_URL
 ARG LABEL_IMAGE_SOURCE
 LABEL org.opencontainers.image.url=${LABEL_IMAGE_URL}
 LABEL org.opencontainers.image.source=${LABEL_IMAGE_SOURCE}
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 RUN set -eux && \
     apt-get -y update && \
     apt-get -y install --no-install-suggests --no-install-recommends \
@@ -157,8 +159,8 @@ USER node
 WORKDIR /usr/src/app/server
 
 # Setup the environment
-ENV NODE_ENV production
-ENV PORT 5000
+ENV NODE_ENV=production
+ENV PORT=5000
 EXPOSE 5000/tcp
 
 # For x86_64
