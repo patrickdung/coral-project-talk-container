@@ -143,6 +143,7 @@ LABEL org.opencontainers.image.source=${LABEL_IMAGE_SOURCE}
 ENV DEBIAN_FRONTEND=noninteractive
 RUN set -eux && \
     apt-get -y update && \
+    apt-get -y upgrade && \
     apt-get -y install --no-install-suggests --no-install-recommends \
     tini bash python3 procps libjemalloc2 && \
     apt-get -y upgrade && apt-get -y autoremove && apt-get -y clean && \
